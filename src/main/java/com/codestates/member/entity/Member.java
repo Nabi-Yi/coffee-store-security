@@ -6,19 +6,28 @@ import com.codestates.stamp.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
+@Data
 public class Member extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
+
+    @Column(nullable = false, updatable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false, updatable = false, unique = true)
+    private String password;
+
+    @Column(length = 20, nullable = false)
+    private String role;
 
     @Column(nullable = false, updatable = false, unique = true)
     private String email;

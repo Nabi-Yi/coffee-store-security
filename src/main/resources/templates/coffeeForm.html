@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>커피정보 입력 페이지</title>
+</head>
+<body>
+<h1>커피정보 입력 페이지</h1>
+<hr/>
+<form name='coffeeForm' method='post' action='/v11/coffees' id='coffeeForm'>
+    <input type="text" name="korName" placeholder="커피 한글명"/><br/>
+    <input type="text" name="engName" placeholder="커피 영어명"/><br/>
+    <input type="text" name="price" placeholder="커피가격"/><br/>
+    <input type="text" name="coffeeCode" placeholder="커피코드(3자리 영문)"/><br/>
+    <p>
+        <button type='submit'>커피 등록하기</button>
+    </p>
+</form>
+
+
+<script>
+     let e = document.getElementById('coffeeForm');
+     e.addEventListener('submit',async (event) => {
+        event.preventDefault();
+        let form = event.currentTarget;
+        let url = form.action;
+
+        try {
+            let formData = new FormData(form);
+            let responseData = await postFormFieldsAsJson({ url, formData });
+            window.location.href = '/v11/coffees?page=1&size=10';
+          } catch (error) {
+            console.error(error);
+          }
+      });
+        async function postFormFieldsAsJson({ url, formData }) {
+
+          let formDataObject = Object.fromEntries(formData.entries());
+          let formDataJsonString = JSON.stringify(formDataObject);
+          console.log(formDataJsonString);
+
+          let fetchOptions = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: formDataJsonString,
+          };
+
+          let res = await fetch(url, fetchOptions);
+
+          if (!res.ok) {
+            let error = await res.text();
+            throw new Error(error);
+          }
+
+          return res.json();
+}
+
+</script>
+</body>
+</html>
+
+<!--var object = {};-->
+<!--formData.forEach(function(value, key){-->
+<!--object[key] = value;-->
+<!--});-->
+<!--var json = JSON.stringify(object);-->
+
+<!--var request = new XMLHttpRequest();-->
+<!--request.open("POST", "http://example.com/submitform.php");-->
+<!--request.send(formData);-->
+
+
+<!--const formElement = document.querySelector('form')-->
+<!--const getFormJSON = (form) => {-->
+<!--const data = new FormData(form);-->
+<!--return Array.from(data.keys()).reduce((result, key) => {-->
+<!--result[key] = data.get(key);-->
+<!--return result;-->
+<!--}, {});-->
+<!--};-->
+
+<!--JSON.stringify(Object.fromEntries(formData));-->

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+</head>
+<body>
+<h1>회원가입 페이지</h1>
+<hr />
+<form action="/join" method="post" id="joinForm">
+    <input type="text" name="username" placeholder="Username" /><br />
+    <input type="password" name="password" placeholder="Password" /><br />
+    <input type="email" name="email" placeholder="Email" /><br />
+    <input type="text" name="name" placeholder="name" /><br />
+    <input type="text" name="phone" placeholder="phone" /><br />
+    <button type='submit'>회원가입</button>
+</form>
+
+
+<script>
+     let e = document.getElementById('joinForm');
+     e.addEventListener('submit',async (event) => {
+        event.preventDefault();
+        let form = event.currentTarget;
+        let url = form.action;
+        try {
+            let formData = new FormData(form);
+            let responseData = await postFormFieldsAsJson({ url, formData });
+            window.location.href = '/login';
+          } catch (error) {
+            console.error(error);
+          }
+
+      });
+        async function postFormFieldsAsJson({ url, formData }) {
+
+          let formDataObject = Object.fromEntries(formData.entries());
+          let formDataJsonString = JSON.stringify(formDataObject);
+          console.log(formDataJsonString);
+
+          let fetchOptions = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: formDataJsonString,
+          };
+
+          let res = await fetch(url, fetchOptions);
+
+          if (!res.ok) {
+            let error = await res.text();
+            throw new Error(error);
+          }
+          return null;
+}
+    </script>
+</body>
+</html>

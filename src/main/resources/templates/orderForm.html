@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+
+
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>커피주문 페이지</title>
+</head>
+<body>
+<h1>커피주문 페이지</h1>
+<hr />
+<form name = 'orderForm' method = 'post' action='/v11/orders' id = 'orderForm'>
+    <input type="text" name="memberId" id="memberId"placeholder="memberId" /><br />
+    <input type="text" name="coffeeId" id="coffeeId" placeholder="coffeeId" /><br />
+    <input type="text" name="quantity" id="quantity" placeholder="quantity" /><br />
+    <p><button type='submit'>주문하기</button></p>
+</form>
+
+
+
+<script>
+     let e = document.getElementById('orderForm');
+     e.addEventListener('submit',async (event) => {
+        event.preventDefault();
+        let form = event.currentTarget;
+        let url = form.action;
+
+        try {
+
+            let formData = new FormData(form);
+            let responseData = await postFormFieldsAsJson({ url, formData });
+            window.location.href = '/v11/orders?page=1&size=10';
+          } catch (error) {
+            console.error(error);
+          }
+      });
+        async function postFormFieldsAsJson({ url, formData }) {
+
+          let formDataObject = Object.fromEntries(formData.entries());
+          const memberId = new Number(formData.get('memberId'));
+          const coffeeId = new Number(formData.get('coffeeId'));
+          const quantity = new Number(formData.get('quantity'));
+
+          let formDataJsonString = JSON.stringify({memberId: memberId, orderCoffees : [{coffeeId : coffeeId, quantity : quantity}]});
+          console.log(formDataJsonString);
+
+          let fetchOptions = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: formDataJsonString,
+          };
+
+          let res = await fetch(url, fetchOptions);
+
+          if (!res.ok) {
+            let error = await res.text();
+            throw new Error(error);
+          }
+
+          return res.json();
+}
+    </script>
+</body>
+</html>
+
+<!--var object = {};-->
+<!--formData.forEach(function(value, key){-->
+<!--object[key] = value;-->
+<!--});-->
+<!--var json = JSON.stringify(object);-->
+
+<!--var request = new XMLHttpRequest();-->
+<!--request.open("POST", "http://example.com/submitform.php");-->
+<!--request.send(formData);-->
+
+
+
+<!--const formElement = document.querySelector('form')-->
+<!--const getFormJSON = (form) => {-->
+<!--const data = new FormData(form);-->
+<!--return Array.from(data.keys()).reduce((result, key) => {-->
+<!--result[key] = data.get(key);-->
+<!--return result;-->
+<!--}, {});-->
+<!--};-->
+
+<!--JSON.stringify(Object.fromEntries(formData));-->

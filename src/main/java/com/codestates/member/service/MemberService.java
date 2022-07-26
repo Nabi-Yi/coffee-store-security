@@ -1,14 +1,15 @@
 package com.codestates.member.service;
 
+import com.codestates.member.entity.Member;
+import com.codestates.member.repository.MemberRepository;
 import com.codestates.exception.BusinessLogicException;
 import com.codestates.exception.ExceptionCode;
 import com.codestates.helper.event.MemberRegistrationApplicationEvent;
-import com.codestates.member.entity.Member;
-import com.codestates.member.repository.MemberRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,16 +28,24 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public MemberService(MemberRepository memberRepository,
-                         ApplicationEventPublisher publisher) {
+    public MemberService(MemberRepository memberRepository, ApplicationEventPublisher publisher, BCryptPasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.publisher = publisher;
+        this.passwordEncoder = passwordEncoder;
+    }
 
+    public Member joinMember(Member member){
+        verifyExistsEmail(member.getEmail());
+        String rawPassword = member.getPassword();
+        String encPassword = passwordEncoder.encode(rawPassword);
+        member.setPassword(encPassword);
+        Member savedMember = memberRepository.save(member);
+        return savedMember;
     }
 
     public Member createMember(Member member) {
-        verifyExistsEmail(member.getEmail());
         Member savedMember = memberRepository.save(member);
 
         // 추가된 부분

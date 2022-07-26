@@ -8,3 +8,8 @@ spring:
     properties:
       hibernate:
         format_sql: true  # (3) SQL pretty print
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/coffeestore
+    username: spring
+    password: codestates
